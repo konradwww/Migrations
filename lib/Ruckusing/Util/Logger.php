@@ -1,5 +1,9 @@
 <?php
 
+namespace Ruckusing\Util;
+
+use Ruckusing\RuckusingException as Ruckusing_Exception;
+
 /**
  * Ruckusing
  *
@@ -17,7 +21,7 @@
  * @author   Cody Caughlan <codycaughlan % gmail . com>
  * @link      https://github.com/ruckus/ruckusing-migrations
  */
-class Ruckusing_Util_Logger
+class Logger
 {
     /**
      * Instance of logger
@@ -75,7 +79,7 @@ class Ruckusing_Util_Logger
         if (self::$_instance !== NULL) {
             return $instance;
         }
-        $instance = new Ruckusing_Util_Logger($logfile);
+        $instance = new Logger($logfile);
 
         return $instance;
     }
@@ -92,10 +96,11 @@ class Ruckusing_Util_Logger
             $line = sprintf("%s [info] %s\n", $ts, $msg);
             fwrite($this->_fp, $line);
         } else {
-            throw new Ruckusing_Exception(
+            // @TODO: we are not catching this anywhere
+            /*throw new Ruckusing_Exception(
                     sprintf("Error: logfile '%s' not open for writing!", $this->_file),
                     Ruckusing_Exception::INVALID_LOG
-            );
+            );*/
         }
 
     }

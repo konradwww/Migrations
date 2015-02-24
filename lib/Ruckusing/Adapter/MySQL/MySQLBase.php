@@ -1,5 +1,13 @@
 <?php
 
+namespace Ruckusing\Adapter\MySQL;
+
+use Ruckusing\Adapter\AdapterBase as Ruckusing_Adapter_Base;
+use Ruckusing\Adapter\AdapterInterface as Ruckusing_Adapter_Interface;
+use Ruckusing\Adapter\MySQL\MySQLTableDefinition as Ruckusing_Adapter_MySQL_TableDefinition;
+use Ruckusing\Util\Naming as Ruckusing_Util_Naming;
+use Ruckusing\RuckusingException as Ruckusing_Exception;
+use \mysqli;
 /**
  * Ruckusing
  *
@@ -22,7 +30,7 @@ define('MYSQL_MAX_IDENTIFIER_LENGTH', 64);
  * @author   Cody Caughlan <codycaughlan % gmail . com>
  * @link      https://github.com/ruckus/ruckusing-migrations
  */
-class Ruckusing_Adapter_MySQL_Base extends Ruckusing_Adapter_Base implements Ruckusing_Adapter_Interface
+class MySQLBase extends Ruckusing_Adapter_Base implements Ruckusing_Adapter_Interface
 {
     /**
      * Name of adapter

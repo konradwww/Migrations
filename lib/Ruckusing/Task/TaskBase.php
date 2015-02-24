@@ -1,5 +1,11 @@
 <?php
 
+namespace Ruckusing\Task;
+
+use Ruckusing\RuckusingException as Ruckusing_Exception;
+use Ruckusing\Adapter\AdapterBase as Ruckusing_Adapter_Base;
+use Ruckusing\FrameworkAbstract as Ruckusing_FrameworkAbstract;
+
 /**
  * Ruckusing
  *
@@ -17,7 +23,7 @@
  * @author   Cody Caughlan <codycaughlan % gmail . com>
  * @link      https://github.com/ruckus/ruckusing-migrations
  */
-class Ruckusing_Task_Base
+class TaskBase
 {
     /**
      * the framework
@@ -69,7 +75,7 @@ class Ruckusing_Task_Base
      */
     public function set_framework($fw)
     {
-        if (!($fw instanceof Ruckusing_FrameworkRunner)) {
+        if (!($fw instanceof Ruckusing_FrameworkAbstract)) {
             throw new Ruckusing_Exception(
                     'Framework must be instance of Ruckusing_FrameworkRunner!',
                     Ruckusing_Exception::INVALID_FRAMEWORK

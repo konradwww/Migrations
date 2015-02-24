@@ -1,5 +1,7 @@
 <?php
 
+namespace Ruckusing\Adapter\Sqlite3;
+
 /**
  * Ruckusing
  *

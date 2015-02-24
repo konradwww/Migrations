@@ -1,5 +1,10 @@
 <?php
 
+namespace Ruckusing\Adapter;
+
+use Ruckusing\RuckusingException as Ruckusing_Exception;
+use Ruckusing\Util\Logger as Ruckusing_Util_Logger;
+
 /**
  * Ruckusing
  *
@@ -29,7 +34,7 @@ define('SQL_SET', 1024);
  * @author   Cody Caughlan <codycaughlan % gmail . com>
  * @link      https://github.com/ruckus/ruckusing-migrations
  */
-class Ruckusing_Adapter_Base
+class AdapterBase
 {
     /**
      * dsn

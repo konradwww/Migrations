@@ -1,5 +1,13 @@
 <?php
 
+namespace Ruckusing\Task\Db;
+
+use Ruckusing\Task\TaskBase as Ruckusing_Task_Base;
+use Ruckusing\Task\TaskInterface as Ruckusing_Task_Interface;
+use Ruckusing\RuckusingException as Ruckusing_Exception;
+use Ruckusing\Util\Migrator as Ruckusing_Util_Migrator;
+use Ruckusing\Util\Naming as Ruckusing_Util_Naming;
+
 /**
  * Ruckusing
  *
@@ -24,7 +32,7 @@ define('STYLE_OFFSET', 2);
  * @author   Cody Caughlan <codycaughlan % gmail . com>
  * @link      https://github.com/ruckus/ruckusing-migrations
  */
-class Task_Db_Migrate extends Ruckusing_Task_Base implements Ruckusing_Task_Interface
+class Migrate extends Ruckusing_Task_Base implements Ruckusing_Task_Interface
 {
     /**
      * migrator util
@@ -89,6 +97,11 @@ class Task_Db_Migrate extends Ruckusing_Task_Base implements Ruckusing_Task_Inte
      */
     public function execute($args)
     {
+        $return = array(
+            'output' => '',
+            'message' => 'Not executed',
+            'status' => Ruckusing_Exception::TASK_NOT_EXECUTED
+        );
         if (!$this->_adapter->supports_migrations()) {
             throw new Ruckusing_Exception(
                     "This database does not support migrations.",
@@ -124,32 +137,39 @@ class Task_Db_Migrate extends Ruckusing_Task_Base implements Ruckusing_Task_Inte
             $current_version = $this->_migrator_util->get_max_version();
             if ($style == STYLE_REGULAR) {
                 if (is_null($target_version)) {
-                    $this->prepare_to_migrate($target_version, 'up');
+                    $allGood = $this->prepare_to_migrate($target_version, 'up');
                 } elseif ($current_version > $target_version) {
-                    $this->prepare_to_migrate($target_version, 'down');
+                    $allGood = $this->prepare_to_migrate($target_version, 'down');
                 } else {
-                    $this->prepare_to_migrate($target_version, 'up');
+                    $allGood = $this->prepare_to_migrate($target_version, 'up');
                 }
             }
 
             if ($style == STYLE_OFFSET) {
-                $this->migrate_from_offset($steps, $current_version, $direction);
+                $allGood = $this->migrate_from_offset($steps, $current_version, $direction);
             }
 
             // Completed - display accumulated output
             if (!empty($output)) {
                 $this->_return .= "\n\n";
             }
+            if ($allGood !== FALSE) {
+                $return['message'] = 'Migration successful';
+                $return['status'] = Ruckusing_Exception::TASK_EXECUTION_SUCCESSFUL;
+            }
         } catch (Ruckusing_Exception $ex) {
             if ($ex->getCode() == Ruckusing_Exception::MISSING_SCHEMA_INFO_TABLE) {
                 $this->_return .= "\tSchema info table does not exist. I tried creating it but failed. Check permissions.";
+                $return['message'] = 'Schema info table does not exist. I tried creating it but failed. Check permissions.';
+                $return['status'] = Ruckusing_Exception::TASK_EXECUTION_FAILED;
             } else {
                 throw $ex;
             }
         }
         $this->_return .= "\n\nFinished: " . date('Y-m-d g:ia T') . "\n\n";
+        $return['output'] = $this->_return;
 
-        return $this->_return;
+        return $return;
     }
 
     /**
@@ -192,7 +212,7 @@ class Task_Db_Migrate extends Ruckusing_Task_Base implements Ruckusing_Task_Inte
             $this->_return .= "\n------------- TARGET ------------------\n";
             $this->_return .= print_r($target, true);
         }
-        $this->prepare_to_migrate(isset($target['version']) ? $target['version'] : null, $direction);
+        return $this->prepare_to_migrate(isset($target['version']) ? $target['version'] : null, $direction);
     }
 
     /**
@@ -217,8 +237,7 @@ class Task_Db_Migrate extends Ruckusing_Task_Base implements Ruckusing_Task_Inte
             );
             if (count($migrations) == 0) {
                 $this->_return .= "\nNo relevant migrations to run. Exiting...\n";
-
-                return;
+                return FALSE;
             }
             $result = $this->run_migrations($migrations, $direction, $destination);
         } catch (Exception $ex) {

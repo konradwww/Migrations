@@ -1,5 +1,12 @@
 <?php
 
+namespace Ruckusing\Adapter\MySQL;
+
+use Ruckusing\RuckusingException as Ruckusing_Exception;
+use Ruckusing\Adapter\AdapterTableDefinition as Ruckusing_Adapter_TableDefinition;
+use Ruckusing\Adapter\AdapterColumnDefinition as Ruckusing_Adapter_ColumnDefinition;
+
+
 /**
  * Ruckusing
  *
@@ -19,7 +26,7 @@
  * @author   Cody Caughlan <codycaughlan % gmail . com>
  * @link      https://github.com/ruckus/ruckusing-migrations
  */
-class Ruckusing_Adapter_MySQL_TableDefinition
+class MySQLTableDefinition
 {
     /**
      * adapter MySQL
@@ -97,7 +104,7 @@ class Ruckusing_Adapter_MySQL_TableDefinition
     public function __construct($adapter, $name, $options = array())
     {
         //sanity check
-        if (!($adapter instanceof Ruckusing_Adapter_MySQL_Base)) {
+        if (!($adapter instanceof MySQLBase)) {
             throw new Ruckusing_Exception(
                     "Invalid MySQL Adapter instance.",
                     Ruckusing_Exception::INVALID_ADAPTER

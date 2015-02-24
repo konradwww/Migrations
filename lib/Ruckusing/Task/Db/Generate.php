@@ -1,5 +1,13 @@
 <?php
 
+namespace Ruckusing\Task\Db;
+
+use Ruckusing\Task\TaskBase as Ruckusing_Task_Base;
+use Ruckusing\Task\TaskInterface as Ruckusing_Task_Interface;
+use Ruckusing\RuckusingException as Ruckusing_Exception;
+use Ruckusing\Util\Migrator as Ruckusing_Util_Migrator;
+use Ruckusing\Util\Naming as Ruckusing_Util_Naming;
+
 /**
  * Ruckusing
  *
@@ -20,7 +28,7 @@
  * @author   Cody Caughlan <codycaughlan % gmail . com>
  * @author   Salimane Adjao Moustapha <me@salimane.com>
  */
-class Task_Db_Generate extends Ruckusing_Task_Base implements Ruckusing_Task_Interface
+class Generate extends Ruckusing_Task_Base implements Ruckusing_Task_Interface
 {
     /**
      * Current Adapter
@@ -49,10 +57,15 @@ class Task_Db_Generate extends Ruckusing_Task_Base implements Ruckusing_Task_Int
      */
     public function execute($args)
     {
+        $return = array(
+            'status' => Ruckusing_Exception::TASK_NOT_EXECUTED,
+            'message' => '',
+            'output' => ''
+        );
         $output = '';
         // Add support for old migration style
         if (!is_array($args) || !array_key_exists('name', $args)) {
-            $cargs = $this->parse_args($_SERVER['argv']);
+            $cargs = $this->parse_args($args);
             //input sanity check
             if (!is_array($cargs) || !array_key_exists('name', $cargs)) {
                 $output .= $this->help();
@@ -125,10 +138,13 @@ class Task_Db_Generate extends Ruckusing_Task_Base implements Ruckusing_Task_Int
                     Ruckusing_Exception::INVALID_MIGRATION_DIR
             );
         } else {
-            $output .= "\n\tCreated migration: {$file_name}\n\n";
+            $return['message'] = "Created migration: {$file_name}";
+            $return['status'] = Ruckusing_Exception::TASK_EXECUTION_SUCCESSFUL;
+            $output .= "\n\t".$return['message']."\n\n";
         }
 
-        return $output;
+        $return['output'] = $output;
+        return $return;
     }
 
     /**
@@ -200,6 +216,7 @@ class Task_Db_Generate extends Ruckusing_Task_Base implements Ruckusing_Task_Int
     {
         $template = <<<TPL
 <?php
+use Ruckusing\Migration\Base as Ruckusing_Migration_Base;
 
 class $klass extends Ruckusing_Migration_Base
 {

@@ -1,5 +1,11 @@
 <?php
 
+namespace Ruckusing\Task\Db;
+
+use Ruckusing\Task\TaskBase as Ruckusing_Task_Base;
+use Ruckusing\Task\TaskInterface as Ruckusing_Task_Interface;
+use Ruckusing\RuckusingException as Ruckusing_Exception;
+
 /**
  * Ruckusing
  *
@@ -22,7 +28,7 @@
  * @author   Cody Caughlan <codycaughlan % gmail . com>
  * @link      https://github.com/ruckus/ruckusing-migrations
  */
-class Task_Db_Setup extends Ruckusing_Task_Base implements Ruckusing_Task_Interface
+class Setup extends Ruckusing_Task_Base implements Ruckusing_Task_Interface
 {
     /**
      * Current Adapter
@@ -51,6 +57,12 @@ class Task_Db_Setup extends Ruckusing_Task_Base implements Ruckusing_Task_Interf
      */
     public function execute($args)
     {
+        $return = array(
+            'output' => '',
+            'message' => 'Not executed yet',
+            'status' => Ruckusing_Exception::TASK_NOT_EXECUTED
+        );
+
         $output = "Started: " . date('Y-m-d g:ia T') . "\n\n";
         $output .= "[db:setup]: \n";
         //it doesnt exist, create it
@@ -58,12 +70,16 @@ class Task_Db_Setup extends Ruckusing_Task_Base implements Ruckusing_Task_Interf
             $output .= sprintf("\tCreating table: %s", RUCKUSING_TS_SCHEMA_TBL_NAME);
             $this->_adapter->create_schema_version_table();
             $output .= "\n\tDone.\n";
+            $return['message'] = RUCKUSING_TS_SCHEMA_TBL_NAME . ' table created';
+            $return['status'] = Ruckusing_Exception::TASK_EXECUTION_SUCCESSFUL;
         } else {
             $output .= sprintf("\tNOTICE: table '%s' already exists. Nothing to do.", RUCKUSING_TS_SCHEMA_TBL_NAME);
+            $return['message'] = sprintf("table '%s' already exists. Nothing to do.", RUCKUSING_TS_SCHEMA_TBL_NAME);
+            $return['status'] = Ruckusing_Exception::TASK_EXECUTION_FAILED;
         }
         $output .= "\n\nFinished: " . date('Y-m-d g:ia T') . "\n\n";
-
-        return $output;
+        $return['output'] = $output;
+        return $return;
     }
 
     /**

@@ -1,5 +1,7 @@
 <?php
 
+namespace Ruckusing\Util;
+
 /**
  * Ruckusing
  *
@@ -28,7 +30,7 @@
  * @author   Cody Caughlan <codycaughlan % gmail . com>
  * @link      https://github.com/ruckus/ruckusing-migrations
  */
-class Ruckusing_Util_Naming
+class Naming
 {
     /**
      * prefix of class name

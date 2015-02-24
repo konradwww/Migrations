@@ -59,6 +59,6 @@ if (!$composer_found) {
         spl_autoload_register('loader', true);
     }
 }
-
+print_r($argv);
 $main = new Ruckusing_FrameworkRunner($db_config, $argv);
 echo $main->execute();

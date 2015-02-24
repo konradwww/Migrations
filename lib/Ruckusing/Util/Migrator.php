@@ -1,4 +1,10 @@
 <?php
+
+namespace Ruckusing\Util;
+
+use Ruckusing\RuckusingException as Ruckusing_Exception;
+use Ruckusing\Adapter\AdapterBase as Ruckusing_Adapter_Base;
+
 /**
  * Ruckusing
  *
@@ -16,7 +22,7 @@
  * @author   Cody Caughlan <codycaughlan % gmail . com>
  * @link      https://github.com/ruckus/ruckusing-migrations
  */
-class Ruckusing_Util_Migrator
+class Migrator
 {
     /**
      * adapter
@@ -238,7 +244,7 @@ class Ruckusing_Util_Migrator
             }
         }
 
-        usort($valid_files, array("Ruckusing_Util_Migrator", "migration_compare")); //sorts in place
+        usort($valid_files, array("Ruckusing\Util\Migrator", "migration_compare")); //sorts in place
 
         if ($direction == 'down') {
             $valid_files = array_reverse($valid_files);

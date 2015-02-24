@@ -1,5 +1,7 @@
 <?php
 
+namespace Ruckusing\Adapter;
+
 /**
  * Ruckusing
  *
@@ -19,7 +21,7 @@
  * @author   Cody Caughlan <codycaughlan % gmail . com>
  * @link      https://github.com/ruckus/ruckusing-migrations
  */
-interface Ruckusing_Adapter_Interface
+interface AdapterInterface
 {
     /**
      * get the current database name

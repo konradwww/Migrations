@@ -1,5 +1,7 @@
 <?php
 
+namespace Ruckusing;
+
 /**
  * Ruckusing
  *
@@ -19,7 +21,7 @@
  * @author   Salimane Adjao Moustapha <me@salimane.com>
  * @link     https://github.com/ruckus/ruckusing-migrations
  */
-class Ruckusing_Exception extends Exception
+class RuckusingException extends \Exception
 {
     const MISSING_SCHEMA_INFO_TABLE = 100;
     const INVALID_INDEX_NAME = 101;
@@ -38,6 +40,11 @@ class Ruckusing_Exception extends Exception
     const MIGRATION_FAILED = 114;
     const MIGRATION_NOT_SUPPORTED = 115;
     const INVALID_DB_DIR = 116;
+
+    const TASK_NOT_FOUND = 900;
+    const TASK_NOT_EXECUTED = 901;
+    const TASK_EXECUTION_SUCCESSFUL = 902;
+    const TASK_EXECUTION_FAILED = 903;
 
     /**
      * Redefine the exception so message isn't optional

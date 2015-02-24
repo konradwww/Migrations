@@ -1,5 +1,12 @@
 <?php
 
+namespace Ruckusing\Task\Db;
+
+use Ruckusing\Task\TaskBase as Ruckusing_Task_Base;
+use Ruckusing\Task\TaskInterface as Ruckusing_Task_Interface;
+use Ruckusing\RuckusingException as Ruckusing_Exception;
+use Ruckusing\Util\Migrator as Ruckusing_Util_Migrator;
+
 /**
  * Ruckusing
  *
@@ -20,7 +27,7 @@
  * @author   Cody Caughlan <codycaughlan % gmail . com>
  * @link      https://github.com/ruckus/ruckusing-migrations
  */
-class Task_Db_Status extends Ruckusing_Task_Base implements Ruckusing_Task_Interface
+class Status extends Ruckusing_Task_Base implements Ruckusing_Task_Interface
 {
     /**
      * Current Adapter
@@ -49,6 +56,12 @@ class Task_Db_Status extends Ruckusing_Task_Base implements Ruckusing_Task_Inter
      */
     public function execute($args)
     {
+        $return = array(
+            'output' => '',
+            'message' => 'Not executed',
+            'status' => Ruckusing_Exception::TASK_NOT_EXECUTED,
+            'data'=> array('pending' => 0, 'done' => 0)
+        );
         $output = "Started: " . date('Y-m-d g:ia T') . "\n\n";
         $output .= "[db:status]: \n";
         $util = new Ruckusing_Util_Migrator($this->_adapter);
@@ -71,8 +84,12 @@ class Task_Db_Status extends Ruckusing_Task_Base implements Ruckusing_Task_Inter
         }
 
         $output .= "\n\nFinished: " . date('Y-m-d g:ia T') . "\n\n";
-
-        return $output;
+        $return['output'] = $output;
+        $return['status'] = Ruckusing_Exception::TASK_EXECUTION_SUCCESSFUL;
+        $return['message']= 'Execution Successful';
+        $return['data']['pending']= count($not_applied);
+        $return['data']['done'] = count($applied);
+        return $return;
     }
 
     /**

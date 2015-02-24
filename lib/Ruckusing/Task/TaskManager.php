@@ -1,5 +1,15 @@
 <?php
 
+namespace Ruckusing\Task;
+
+use Ruckusing\RuckusingException as Ruckusing_Exception;
+use Ruckusing\Adapter\AdapterBase as Ruckusing_Adapter_Base;
+use Ruckusing\Task\TaskInterface as Ruckusing_Task_Interface;
+use Ruckusing\Task\Db\Setup;
+use Ruckusing\Task\Db\Generate;
+use Ruckusing\Task\Db\Migrate;
+use Ruckusing\Task\Db\Status;
+
 /**
  * Ruckusing
  *
@@ -9,7 +19,8 @@
  * @link      https://github.com/ruckus/ruckusing-migrations
  */
 
-define('RUCKUSING_TASK_DIR', RUCKUSING_BASE . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'Task');
+//define('RUCKUSING_TASK_DIR', RUCKUSING_BASE . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'Task');
+define('RUCKUSING_TASK_DIR', dirname(__FILE__) . '/../../Task');// . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'Task');
 
 /**
  * Ruckusing_Task_Manager
@@ -19,7 +30,7 @@ define('RUCKUSING_TASK_DIR', RUCKUSING_BASE . DIRECTORY_SEPARATOR . 'lib' . DIRE
  * @author   Cody Caughlan <codycaughlan % gmail . com>
  * @link      https://github.com/ruckus/ruckusing-migrations
  */
-class Ruckusing_Task_Manager
+class TaskManager
 {
     /**
      * adapter
@@ -47,7 +58,11 @@ class Ruckusing_Task_Manager
     {
         $this->setAdapter($adapter);
         $this->_config = $config;
-        $this->load_all_tasks(RUCKUSING_TASK_DIR);
+        //$this->load_all_tasks(RUCKUSING_TASK_DIR);
+        $this->register_task('db:setup', new Setup($this->get_adapter()));
+        $this->register_task('db:generate', new Generate($this->get_adapter()));
+        $this->register_task('db:migrate', new Migrate($this->get_adapter()));
+        $this->register_task('db:status', new Status($this->get_adapter()));
         if(is_array($config) && array_key_exists('tasks_dir', $config)) {
           $this->load_all_tasks($config['tasks_dir']);
         }

@@ -1,5 +1,7 @@
 <?php
 
+namespace Ruckusing\Adapter\PgSQL;
+
 /**
  * Ruckusing
  *

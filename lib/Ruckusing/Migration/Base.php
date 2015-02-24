@@ -1,5 +1,10 @@
 <?php
 
+namespace Ruckusing\Migration;
+
+use Ruckusing\RuckusingException as Ruckusing_Exception;
+use Ruckusing\Adapter\AdapterBase as Ruckusing_Adapter_Base;
+
 /**
  * Ruckusing
  *
@@ -17,7 +22,7 @@
  * @author   Cody Caughlan <codycaughlan % gmail . com>
  * @link      https://github.com/ruckus/ruckusing-migrations
  */
-class Ruckusing_Migration_Base
+class Base
 {
     /**
      * adapter
@@ -336,6 +341,6 @@ class Ruckusing_Migration_Base
  * @package  Ruckusing_Migration
  * @author   (c) Cody Caughlan <codycaughlan % gmail . com>
  */
-class Ruckusing_BaseMigration extends Ruckusing_Migration_Base
+class Ruckusing_BaseMigration extends Base
 {
 }

@@ -1,5 +1,13 @@
 <?php
 
+namespace Ruckusing;
+
+use Ruckusing\FrameworkAbstract;
+use Ruckusing\RuckusingException as Ruckusing_Exception;
+use Ruckusing\Util\Logger as Ruckusing_Util_Logger;
+use Ruckusing\Adapter\MySQL\MySQLBase;
+use Ruckusing\Task\TaskManager as Ruckusing_Task_Manager;
+
 /**
  * Ruckusing
  *
@@ -20,7 +28,7 @@
  * @author   Cody Caughlan <codycaughlan % gmail . com>
  * @link     https://github.com/ruckus/ruckusing-migrations
  */
-class Ruckusing_FrameworkRunner
+class FrameworkRunner extends FrameworkAbstract
 {
     /**
      * reference to our DB connection
@@ -108,8 +116,8 @@ class Ruckusing_FrameworkRunner
      */
     public function __construct($config, $argv, Ruckusing_Util_Logger $log = null)
     {
-        set_error_handler(array('Ruckusing_Exception', 'errorHandler'), E_ALL);
-        set_exception_handler(array('Ruckusing_Exception', 'exceptionHandler'));
+        set_error_handler(array('Ruckusing\RuckusingException', 'errorHandler'), E_ALL);
+        set_exception_handler(array('Ruckusing\RuckusingException', 'exceptionHandler'));
 
         //parse arguments
         $this->parse_args($argv);
@@ -125,7 +133,7 @@ class Ruckusing_FrameworkRunner
         $this->initialize_logger();
 
         //include all adapters
-        $this->load_all_adapters(RUCKUSING_BASE . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'Ruckusing' . DIRECTORY_SEPARATOR . 'Adapter');
+        //$this->load_all_adapters(RUCKUSING_BASE . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'Ruckusing' . DIRECTORY_SEPARATOR . 'Adapter');
 
         //initialize logger
         $this->initialize_db();
@@ -492,13 +500,13 @@ class Ruckusing_FrameworkRunner
         $adapter_class = null;
         switch ($db_type) {
             case 'mysql':
-                $adapter_class = "Ruckusing_Adapter_MySQL_Base";
+                $adapter_class = "Ruckusing\Adapter\MySQL\MySQLBase";;
                 break;
             case 'pgsql':
-                $adapter_class = "Ruckusing_Adapter_PgSQL_Base";
+                $adapter_class = "Ruckusing\Adapter\PgSQLBase";
                 break;
             case 'sqlite':
-                $adapter_class = "Ruckusing_Adapter_Sqlite3_Base";
+                $adapter_class = "Ruckusing\Adapter\Sqlite3Base";
                 break;
         }
 
