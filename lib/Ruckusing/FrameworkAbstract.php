@@ -81,7 +81,7 @@ abstract class FrameworkAbstract implements FrameworkInterface
      *
      * @var boolean
      */
-    private $_showhelp = false;
+    protected $_showhelp = false;
 
     /**
      * To force to use this directory instead db name
@@ -103,6 +103,8 @@ abstract class FrameworkAbstract implements FrameworkInterface
     {
         set_error_handler(array('Ruckusing\RuckusingException', 'errorHandler'), E_ALL);
         set_exception_handler(array('Ruckusing\RuckusingException', 'exceptionHandler'));
+
+        $this->_migrations_dirname = isset($config['migrations_dirname']) ? $config['migrations_dirname'] : '';
 
         //parse arguments
         $this->parse_args($argv);
