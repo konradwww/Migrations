@@ -177,8 +177,8 @@ abstract class FrameworkAbstract implements FrameworkInterface
             return $migration_dir . $this->_config['db'][$this->_env]['directory'];
         }
 
-        $migrations_dirnamme = isset($this->_migrations_dirname) ? $this->_migrations_dirname : $this->_config['db'][$this->_env]['database'];
-        return $migration_dir . $migrations_dirnamme;
+        $migrations_dirname = isset($this->_migrations_dirname) ? $this->_migrations_dirname : $this->_config['db'][$this->_env]['database'];
+        return $migration_dir . $migrations_dirname;
     }
 
     /**
