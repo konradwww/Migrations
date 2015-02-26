@@ -130,7 +130,16 @@ class Migrator
                     Ruckusing_Exception::INVALID_TARGET_MIGRATION
             );
         }
-        $start = $direction == 'up' ? 0 : array_search($current, $migrations);
+        if($destination) {
+            foreach ($migrations as $key => $migration) {
+                if($migration['version']===$destination) {
+                    $start = $key;
+                    break;
+                }
+            }
+        } else {
+            $start = $direction == 'up' ? 0 : array_search($current, $migrations);
+        }
         $start = $start !== false ? $start : 0;
         $finish = array_search($target, $migrations);
         $finish = $finish !== false ? $finish : (count($migrations) - 1);
