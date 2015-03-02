@@ -281,6 +281,11 @@ class Base
         return $result;
     }
 
+    public function insert($table_name, $data) {
+        if(!is_array($data)) return false;
+        return $this->_adapter->insert($table_name, $data);
+    }
+
     /**
      * Select one query
      *

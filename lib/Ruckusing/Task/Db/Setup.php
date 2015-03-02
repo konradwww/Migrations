@@ -66,15 +66,16 @@ class Setup extends Ruckusing_Task_Base implements Ruckusing_Task_Interface
         $output = "Started: " . date('Y-m-d g:ia T') . "\n\n";
         $output .= "[db:setup]: \n";
         //it doesnt exist, create it
-        if (!$this->_adapter->table_exists(RUCKUSING_TS_SCHEMA_TBL_NAME)) {
-            $output .= sprintf("\tCreating table: %s", RUCKUSING_TS_SCHEMA_TBL_NAME);
+        $table_ts_name = $this->_adapter->get_table_name(RUCKUSING_TS_SCHEMA_TBL_NAME);
+        if (!$this->_adapter->table_exists($table_ts_name)) {
+            $output .= sprintf("\tCreating table: %s", $table_ts_name);
             $this->_adapter->create_schema_version_table();
             $output .= "\n\tDone.\n";
-            $return['message'] = RUCKUSING_TS_SCHEMA_TBL_NAME . ' table created';
+            $return['message'] = $table_ts_name . ' table created';
             $return['status'] = Ruckusing_Exception::TASK_EXECUTION_SUCCESSFUL;
         } else {
-            $output .= sprintf("\tNOTICE: table '%s' already exists. Nothing to do.", RUCKUSING_TS_SCHEMA_TBL_NAME);
-            $return['message'] = sprintf("table '%s' already exists. Nothing to do.", RUCKUSING_TS_SCHEMA_TBL_NAME);
+            $output .= sprintf("\tNOTICE: table '%s' already exists. Nothing to do.", $table_ts_name);
+            $return['message'] = sprintf("table '%s' already exists. Nothing to do.", $table_ts_name);
             $return['status'] = Ruckusing_Exception::TASK_EXECUTION_FAILED;
         }
         $output .= "\n\nFinished: " . date('Y-m-d g:ia T') . "\n\n";

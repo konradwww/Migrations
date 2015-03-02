@@ -63,6 +63,8 @@ class AdapterBase
      */
     public $logger;
 
+    protected $_config;
+
     /**
      * Creates an instance of Ruckusing_Adapter_Base
      *
@@ -70,9 +72,10 @@ class AdapterBase
      *
      * @return Ruckusing_Adapter_Base
      */
-    public function __construct($dsn)
+    public function __construct($dsn, $config)
     {
         $this->set_dsn($dsn);
+        $this->_config = $config;
     }
 
     /**
@@ -153,6 +156,14 @@ class AdapterBase
     public function has_table($tbl)
     {
         return $this->table_exists($tbl);
+    }
+
+    public function get_table_name($tableName) {
+        if($this->_config['prefix']) {
+            $tableName = $this->_config['prefix'] . $tableName;
+        }
+
+        return $tableName;
     }
 
 }

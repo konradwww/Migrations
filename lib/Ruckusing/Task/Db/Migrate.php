@@ -235,6 +235,7 @@ class Migrate extends Ruckusing_Task_Base implements Ruckusing_Task_Interface
                     $direction,
                     $destination
             );
+            var_dump($destination);
             if (count($migrations) == 0) {
                 $this->_return .= "\nNo relevant migrations to run. Exiting...\n";
                 return FALSE;
@@ -332,7 +333,8 @@ class Migrate extends Ruckusing_Task_Base implements Ruckusing_Task_Interface
      */
     private function verify_environment()
     {
-        if (!$this->_adapter->table_exists(RUCKUSING_TS_SCHEMA_TBL_NAME) ) {
+        $table_ts_name = $this->_adapter->get_table_name(RUCKUSING_TS_SCHEMA_TBL_NAME);
+        if (!$this->_adapter->table_exists($table_ts_name) ) {
             $this->_return .= "\n\tSchema version table does not exist. Auto-creating.";
             $this->auto_create_schema_info_table();
         }
@@ -359,8 +361,9 @@ class Migrate extends Ruckusing_Task_Base implements Ruckusing_Task_Interface
      */
     private function auto_create_schema_info_table()
     {
+        $table_ts_name = $this->_adapter->get_table_name(RUCKUSING_TS_SCHEMA_TBL_NAME);
         try {
-            $this->_return .= sprintf("\n\tCreating schema version table: %s", RUCKUSING_TS_SCHEMA_TBL_NAME . "\n\n");
+            $this->_return .= sprintf("\n\tCreating schema version table: %s", $table_ts_name . "\n\n");
             $this->_adapter->create_schema_version_table();
 
             return true;

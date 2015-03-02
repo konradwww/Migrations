@@ -226,7 +226,7 @@ abstract class FrameworkAbstract implements FrameworkInterface
             );
         }
         //construct our adapter
-        $this->_adapter = new $adapter($db, $this->logger);
+        $this->_adapter = new $adapter($db, $this->logger, $this->_config);
 
     }
 
@@ -262,22 +262,28 @@ abstract class FrameworkAbstract implements FrameworkInterface
         //insert all existing records into our new table
         $migrator_util = new Ruckusing_Util_Migrator($this->_adapter);
         $files = $migrator_util->get_migration_files($this->migrations_directories(), 'up');
+        $table_name = RUCKUSING_SCHEMA_TBL_NAME;
+        $table_ts_name = RUCKUSING_TS_SCHEMA_TBL_NAME;
+        if(isset($this->_config['prefix'])) {
+            $table_name = RUCKUSING_SCHEMA_TBL_NAME . $table_name;
+            $table_ts_name = RUCKUSING_TS_SCHEMA_TBL_NAME . $table_ts_name;
+        }
         foreach ($files as $file) {
             if ((int) $file['version'] >= PHP_INT_MAX) {
                 //its new style like '20081010170207' so its not a candidate
                 continue;
             }
             //query old table, if it less than or equal to our max version, then its a candidate for insertion
-            $query_sql = sprintf("SELECT version FROM %s WHERE version >= %d", RUCKUSING_SCHEMA_TBL_NAME, $file['version']);
+            $query_sql = sprintf("SELECT version FROM %s WHERE version >= %d", $table_name, $file['version']);
             $existing_version_old_style = $this->_adapter->select_one($query_sql);
             if (count($existing_version_old_style) > 0) {
                 //make sure it doesnt exist in our new table, who knows how it got inserted?
-                $new_vers_sql = sprintf("SELECT version FROM %s WHERE version = %d", RUCKUSING_TS_SCHEMA_TBL_NAME, $file['version']);
+                $new_vers_sql = sprintf("SELECT version FROM %s WHERE version = %d", $table_ts_name, $file['version']);
                 $existing_version_new_style = $this->_adapter->select_one($new_vers_sql);
                 if (empty($existing_version_new_style)) {
                     // use sprintf & %d to force it to be stripped of any leading zeros, we *know* this represents an old version style
                     // so we dont have to worry about PHP and integer overflow
-                    $insert_sql = sprintf("INSERT INTO %s (version) VALUES (%d)", RUCKUSING_TS_SCHEMA_TBL_NAME, $file['version']);
+                    $insert_sql = sprintf("INSERT INTO %s (version) VALUES (%d)", $table_ts_name, $file['version']);
                     $this->_adapter->query($insert_sql);
                 }
             }
@@ -482,6 +488,7 @@ abstract class FrameworkAbstract implements FrameworkInterface
                 list($key, $value) = explode('=', $arg);
                 $key = strtolower($key); // Allow both upper and lower case parameters
                 $options[$key] = $value;
+
                 if ($key == 'env') {
                     $this->_env = $value;
                 }

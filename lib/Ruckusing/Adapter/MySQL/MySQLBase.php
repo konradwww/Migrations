@@ -75,9 +75,9 @@ class MySQLBase extends Ruckusing_Adapter_Base implements Ruckusing_Adapter_Inte
      *
      * @return Ruckusing_Adapter_MySQL_Base
      */
-    public function __construct($dsn, $logger)
+    public function __construct($dsn, $logger, $config)
     {
-        parent::__construct($dsn);
+        parent::__construct($dsn, $config);
         $this->connect($dsn);
         $this->set_logger($logger);
     }
@@ -144,11 +144,12 @@ class MySQLBase extends Ruckusing_Adapter_Base implements Ruckusing_Adapter_Inte
      */
     public function create_schema_version_table()
     {
-        if (!$this->has_table(RUCKUSING_TS_SCHEMA_TBL_NAME)) {
-            $t = $this->create_table(RUCKUSING_TS_SCHEMA_TBL_NAME, array('id' => false));
+        $table_name = RUCKUSING_TS_SCHEMA_TBL_NAME;
+        if (!$this->has_table($table_name)) {
+            $t = $this->create_table($table_name, array('id' => false));
             $t->column('version', 'string');
             $t->finish();
-            $this->add_index(RUCKUSING_TS_SCHEMA_TBL_NAME, 'version', array('unique' => true));
+            $this->add_index($table_name, 'version', array('unique' => true));
         }
     }
 
@@ -336,6 +337,61 @@ class MySQLBase extends Ruckusing_Adapter_Base implements Ruckusing_Adapter_Inte
         return $this->query($query);
     }
 
+    public function insert($table_name, $data)
+    {
+        $sql_format = "INSERT INTO %s %s VALUES %s;";
+        $table_name = $this->identifier($this->get_table_name($table_name));
+        $fields = $this->get_columns($data);
+        $values = $this->parse_values(array_values($data));
+
+        $sql = sprintf($sql_format, $table_name, $fields, $values);
+        $this->execute($sql);
+    }
+
+    public function get_columns($columns)
+    {
+        $arrayCount = array_filter($columns,'is_array');
+        if(count($arrayCount)>0) {
+            $columns = array_pop($columns);
+        }
+
+        return "(" . implode(',', array_map(array($this, 'identifier'), array_keys($columns))) . ")";
+    }
+
+    public function parse_values($data)
+    {
+        $arrayCount = array_filter($data,'is_array');
+        if(count($arrayCount)===0) {
+            return $this->get_values($data);
+        }
+
+        $datas = array();
+        foreach($data as $d) {
+            $datas[] = $this->get_values($d);
+        }
+        return implode(',',$datas);
+    }
+
+    protected function get_values($data) {
+        $values = array_map(function($value) {
+            return $this->get_value($value);
+        }, $data);
+
+        return "(" . implode(',', $values) . ")";
+    }
+
+    protected function get_value($value) {
+        if(NULL === $value) {
+            return 'NULL';
+        } elseif(TRUE === is_bool($value)) {
+            return ($value) ? 'TRUE' : 'FALSE';
+        } elseif(TRUE === is_string($value)) {
+            return "'".$this->quote_string($value)."'";
+        } else {
+            return $value;
+        }
+    }
+
     /**
      * Execute a query
      *
@@ -463,6 +519,7 @@ class MySQLBase extends Ruckusing_Adapter_Base implements Ruckusing_Adapter_Inte
      */
     public function create_table($table_name, $options = array())
     {
+        $table_name = $this->get_table_name($table_name);
         return new Ruckusing_Adapter_MySQL_TableDefinition($this, $table_name, $options);
     }
 
@@ -732,6 +789,7 @@ class MySQLBase extends Ruckusing_Adapter_Base implements Ruckusing_Adapter_Inte
      */
     public function add_index($table_name, $column_name, $options = array())
     {
+        $table_name = $this->get_table_name($table_name);
         if (empty($table_name)) {
             throw new Ruckusing_Exception(
                     "Missing table name parameter",
@@ -794,6 +852,7 @@ class MySQLBase extends Ruckusing_Adapter_Base implements Ruckusing_Adapter_Inte
      */
     public function remove_index($table_name, $column_name, $options = array())
     {
+        $table_name = $this->get_table_name($table_name);
         if (empty($table_name)) {
             throw new Ruckusing_Exception(
                     "Missing table name parameter",
@@ -829,6 +888,7 @@ class MySQLBase extends Ruckusing_Adapter_Base implements Ruckusing_Adapter_Inte
      */
     public function has_index($table_name, $column_name, $options = array())
     {
+        $table_name = $this->get_table_name($table_name);
         if (empty($table_name)) {
             throw new Ruckusing_Exception(
                     "Missing table name parameter",
@@ -866,6 +926,7 @@ class MySQLBase extends Ruckusing_Adapter_Base implements Ruckusing_Adapter_Inte
      */
     public function indexes($table_name)
     {
+        $table_name = $this->get_table_name($table_name);
         $sql = sprintf("SHOW KEYS FROM %s", $this->identifier($table_name));
         $result = $this->select_all($sql);
         $indexes = array();
@@ -1077,7 +1138,7 @@ class MySQLBase extends Ruckusing_Adapter_Base implements Ruckusing_Adapter_Inte
      */
     public function set_current_version($version)
     {
-        $sql = sprintf("INSERT INTO %s (version) VALUES ('%s')", RUCKUSING_TS_SCHEMA_TBL_NAME, $version);
+        $sql = sprintf("INSERT INTO %s (version) VALUES ('%s')", $this->get_table_name(RUCKUSING_TS_SCHEMA_TBL_NAME), $version);
 
         return $this->execute_ddl($sql);
     }
@@ -1091,7 +1152,7 @@ class MySQLBase extends Ruckusing_Adapter_Base implements Ruckusing_Adapter_Inte
      */
     public function remove_version($version)
     {
-        $sql = sprintf("DELETE FROM %s WHERE version = '%s'", RUCKUSING_TS_SCHEMA_TBL_NAME, $version);
+        $sql = sprintf("DELETE FROM %s WHERE version = '%s'", $this->get_table_name(RUCKUSING_TS_SCHEMA_TBL_NAME), $version);
 
         return $this->execute_ddl($sql);
     }

@@ -53,9 +53,10 @@ class TaskBase
      *
      * @return Ruckusing_Task_Base
      */
-    public function __construct($adapter)
+    public function __construct($adapter, $config = null)
     {
         $this->setAdapter($adapter);
+        $this->_config = $config;
     }
 
     /**
