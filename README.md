@@ -1,3 +1,6 @@
+# Migrations
+Migrations based on Ruckusing (This would be a Ruckusing-fork)
+
 # Introduction
 
 Ruckusing is a framework written in PHP5 for generating and managing a set of "database migrations". Database migrations are declarative files which represent the state of a DB (its tables, columns, indexes, etc) at a particular state of time. By using database migrations, multiple developers can work on the same application and be guaranteed that the application is in a consistent state across all remote developer machines.
@@ -474,3 +477,4 @@ $ phpunit tests/unit/MySQLAdapterTest.php
 Some of the tests require a `mysql_test` or `pg_test` database configuration to be defined. If this is required and its not satisfied than the test will complain appropriately.
 
 
+=======
