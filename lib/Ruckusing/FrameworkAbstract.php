@@ -2,6 +2,7 @@
 
 namespace Ruckusing;
 
+use Ruckusing\RuckusingException as Ruckusing_Exception;
 use Ruckusing\FrameworkInterface;
 use Ruckusing\Util\Logger as Ruckusing_Util_Logger;
 use Ruckusing\Task\TaskManager as Ruckusing_Task_Manager;
