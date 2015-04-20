@@ -235,7 +235,6 @@ class Migrate extends Ruckusing_Task_Base implements Ruckusing_Task_Interface
                     $direction,
                     $destination
             );
-            var_dump($destination);
             if (count($migrations) == 0) {
                 $this->_return .= "\nNo relevant migrations to run. Exiting...\n";
                 return FALSE;
