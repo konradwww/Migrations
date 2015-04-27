@@ -1,5 +1,5 @@
 {
-    "name":			"ruckusing/ruckusing-migrations",
+    "name":			"directus/migrations",
     "type":         "library",
 	"description":	"Framework for generating and managing database migrations",
 	"keywords":		["ruckusing", "rake", "migrations", "database", "mysql", "postgres", "task"],
