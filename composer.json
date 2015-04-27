@@ -3,7 +3,7 @@
   "type":         "library",
   "description":  "Framework for generating and managing database migrations",
   "keywords":   [],
-  "homepage":   "https://github.com/ruckus/ruckusing-migrations",
+  "homepage":   "https://github.com/wellingguzman/migrations",
   "license":    "MIT",
   "authors":[
     {
