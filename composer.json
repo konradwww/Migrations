@@ -2,7 +2,7 @@
   "name":     "directus/migrations",
   "type":         "library",
   "description":  "Framework for generating and managing database migrations",
-  "keywords":   ["ruckusing", "rake", "migrations", "database", "mysql", "postgres", "task"],
+  "keywords":   [],
   "homepage":   "https://github.com/ruckus/ruckusing-migrations",
   "license":    "MIT",
   "authors":[
