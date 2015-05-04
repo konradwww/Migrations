@@ -1,13 +1,5 @@
-logs/*.log
-tests/logs/*.log
-tests/dummy/db/ruckusing_migrations_test/schema.txt
+*.log
 .DS*
 .idea
 tmp/
 ruckusing.conf.php
-tests/dummy/db/schema.txt
-tests/dummy/db/db
-migrations/
-tests/dummy/db/test.sqlite3
-custom_tasks/*
-dev-notes.txt
