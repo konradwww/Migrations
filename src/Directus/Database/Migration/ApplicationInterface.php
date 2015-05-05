@@ -2,7 +2,7 @@
 
 namespace Directus\Database\Migration;
 
-interface FrameworkInterface
+interface ApplicationInterface
 {
     public function __construct($config, $argv);
     public function execute();
