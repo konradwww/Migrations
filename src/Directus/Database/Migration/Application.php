@@ -1,8 +1,8 @@
 <?php
 
-namespace Ruckusing;
+namespace Directus\Database\Migration;
 
-use Ruckusing\FrameworkAbstract;
+use Directus\Database\Migration\ApplicationAbstract;
 use Ruckusing\Util\Logger as Ruckusing_Util_Logger;
 use Ruckusing\RuckusingException as Ruckusing_Exception;
 use Ruckusing\Adapter\MySQL\MySQLBase;
@@ -27,7 +27,7 @@ use Ruckusing\Adapter\MySQL\MySQLBase;
  * @author   Cody Caughlan <codycaughlan % gmail . com>
  * @link     https://github.com/ruckus/ruckusing-migrations
  */
-class Framework extends FrameworkAbstract
+class Application extends ApplicationAbstract
 {
     /**
      * Execute the current task

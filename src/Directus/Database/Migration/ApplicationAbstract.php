@@ -1,13 +1,12 @@
 <?php
 
-namespace Ruckusing;
+namespace Directus\Database\Migration;
 
-use Ruckusing\RuckusingException as Ruckusing_Exception;
-use Ruckusing\FrameworkInterface;
-use Ruckusing\Util\Logger as Ruckusing_Util_Logger;
-use Ruckusing\Task\TaskManager as Ruckusing_Task_Manager;
+use Directus\Database\Migration\Exception;
+use Directus\Database\Migration\ApplicationInterface;
+use Directus\Database\Migration\Task\TaskManager;
 
-abstract class FrameworkAbstract implements FrameworkInterface
+abstract class ApplicationAbstract implements ApplicationInterface
 {
     /**
      * reference to our DB connection
@@ -93,29 +92,24 @@ abstract class FrameworkAbstract implements FrameworkInterface
      *
      * @return Ruckusing_FrameworkRunner
      */
-    public function __construct($config, $argv = array(), Ruckusing_Util_Logger $log = null)
+    public function __construct($config, $argv = array())
     {
-        set_error_handler(array('Ruckusing\RuckusingException', 'errorHandler'), E_ALL);
-        set_exception_handler(array('Ruckusing\RuckusingException', 'exceptionHandler'));
+        set_error_handler(array('Directus\Database\Migration\Exception', 'errorHandler'), E_ALL);
+        set_exception_handler(array('Directus\Database\Migration\Exception', 'exceptionHandler'));
+
+        if (!$argv) {
+            $argv = $_SERVER['argv'];
+            array_shift($argv);
+        }
 
         //parse arguments
-        $this->parse_args($argv);
+        $this->parseArgs($argv);
 
         //set config variables
         $this->_config = $config;
 
         //verify config array
         $this->verify_db_config();
-
-        //initialize logger
-        $this->logger = $log;
-        // @todo: logger should be working here
-        try {
-            $this->initialize_logger();
-        } catch(Exception $e) {};
-
-        //include all adapters
-        //$this->load_all_adapters(RUCKUSING_BASE . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'Ruckusing' . DIRECTORY_SEPARATOR . 'Adapter');
 
         //initialize logger
         $this->initialize_db();
@@ -476,30 +470,38 @@ abstract class FrameworkAbstract implements FrameworkInterface
      *
      * @param array $argv the current command line arguments
      */
-    protected function parse_args($argv)
+    protected function parseArgs($argv)
     {
-        $num_args = count($argv);
-
+        $argsLength = count($argv);
         $options = array();
-        for ($i = 0; $i < $num_args; $i++) {
+
+        for ($i = 0; $i < $argsLength; $i++) {
             $arg = $argv[$i];
             if (stripos($arg, ':') !== false) {
-                $this->_cur_task_name = $arg;
+                $this->currentTaskName = $arg;
             } elseif ($arg == 'help') {
-                $this->_showhelp = true;
+                $this->showHelp = true;
                 continue;
-            } elseif (stripos($arg, '=') !== false) {
-                list($key, $value) = explode('=', $arg);
-                $key = strtolower($key); // Allow both upper and lower case parameters
-                $options[$key] = $value;
+            } elseif (preg_match("/^(--)([A-Za-z0-9-_]+)(=)?([A-Za-z0-9-_]+)*$/", $arg, $argMatch)) {
+                switch(count($argMatch)) {
+                    case 3:
+                        $key = strtolower($argMatch[2]);
+                        $value = '';
+                        break;
+                    case 5:
+                        $key = strtolower($argMatch[2]);
+                        $value = $argMatch[4];
+                        break;
+                }
 
                 if ($key == 'env') {
-                    $this->_env = $value;
+                    $this->environment = $value;
                 }
             } elseif (stripos($arg, '_') !== false) {
                 $options['name'] = $arg;
             }
         }
-        $this->_task_options = $options;
+
+        $this->currentTaskOptions = $options;
     }
 }
