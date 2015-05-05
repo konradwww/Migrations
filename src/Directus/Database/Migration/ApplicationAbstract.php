@@ -13,7 +13,7 @@ abstract class ApplicationAbstract implements ApplicationInterface
      *
      * @var array
      */
-    private $_db = null;
+    private $db = null;
 
     /**
      * The currently active config
@@ -27,14 +27,14 @@ abstract class ApplicationAbstract implements ApplicationInterface
      *
      * @var array
      */
-    private $_config = array();
+    private $config = array();
 
     /**
      * Task manager
      *
      * @var Ruckusing_Task_Manager
      */
-    protected $_task_mgr = null;
+    protected $taskManager = null;
 
     /**
      * adapter
@@ -48,14 +48,14 @@ abstract class ApplicationAbstract implements ApplicationInterface
      *
      * @var string
      */
-    protected $_cur_task_name = "";
+    protected $currentTaskName = "";
 
     /**
      * task options
      *
      * @var string
      */
-    protected $_task_options = "";
+    protected $currentTaskOptions = "";
 
     /**
      * Environment
@@ -64,7 +64,7 @@ abstract class ApplicationAbstract implements ApplicationInterface
      *
      * @var string
      */
-    private $_env = "development";
+    private $environment = "development";
 
     /**
      * set up some defaults
