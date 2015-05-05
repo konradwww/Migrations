@@ -1,19 +1,16 @@
 <?php
 
-namespace Ruckusing;
-
-use Ruckusing\Util\Logger as Ruckusing_Util_Logger;
+namespace Directus\Database\Migration;
 
 interface FrameworkInterface
 {
-    public function __construct($config, $argv, Ruckusing_Util_Logger $log);
+    public function __construct($config, $argv);
     public function execute();
-    public function get_adapter();
-    public function init_tasks();
-    public function migrations_directory($key);
-    public function migrations_directories();
-    public function db_directory();
-    public function initialize_db();
-    public function initialize_logger();
-    public function update_schema_for_timestamps();
+    public function getAdapter();
+    public function initTasks();
+    public function migrationsDirectory($key);
+    public function migrationsDirectories();
+    public function dbDirectory();
+    public function initializeDb();
+    public function updateSchemaForTimestamps();
 }

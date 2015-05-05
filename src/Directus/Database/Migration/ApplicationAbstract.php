@@ -81,7 +81,7 @@ abstract class ApplicationAbstract implements ApplicationInterface
      *
      * @var boolean
      */
-    protected $_showhelp = false;
+    protected $showHelp = false;
 
     /**
      * Creates an instance of Ruckusing_Adapters_Base
