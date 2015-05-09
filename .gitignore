@@ -1,5 +1,3 @@
 *.log
 .DS*
 .idea
-tmp/
-ruckusing.conf.php
