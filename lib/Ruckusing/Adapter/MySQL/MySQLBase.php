@@ -1108,7 +1108,7 @@ class MySQLBase extends Ruckusing_Adapter_Base implements Ruckusing_Adapter_Inte
                 $default_format = '%d';
             } elseif (is_bool($options['default'])) {
                 $default_format = "'%d'";
-            } elseif (is_internal_default($options['default'])) {
+            } elseif ($this->is_internal_default($options['default'])) {
                 $default_format = "%s";
             } else {
                 $default_format = "'%s'";
