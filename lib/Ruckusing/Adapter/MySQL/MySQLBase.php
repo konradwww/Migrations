@@ -956,6 +956,8 @@ class MySQLBase extends Ruckusing_Adapter_Base implements Ruckusing_Adapter_Inte
     public function type_to_sql($type, $options = array())
     {
         $natives = $this->native_database_types();
+        // case insensitive
+        $type = strtolower($type);
 
         if (!array_key_exists($type, $natives)) {
             $error = sprintf("Error:I dont know what column type of '%s' maps to for MySQL.", $type);
