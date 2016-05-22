@@ -426,7 +426,7 @@ abstract class FrameworkAbstract implements FrameworkInterface
                 $adapter_class = "Ruckusing\Adapter\PgSQLBase";
                 break;
             case 'sqlite':
-                $adapter_class = "Ruckusing\Adapter\Sqlite3Base";
+                $adapter_class = "Ruckusing\Adapter\SQLite3\Base";
                 break;
         }
 
