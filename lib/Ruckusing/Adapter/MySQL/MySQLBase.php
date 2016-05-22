@@ -348,14 +348,65 @@ class MySQLBase extends Ruckusing_Adapter_Base implements Ruckusing_Adapter_Inte
         $this->execute($sql);
     }
 
-    public function get_columns($columns)
+    public function update($tableName, $data, $conditions = array())
+    {
+        $sqlFormat = 'UPDATE %s SET %s';
+        if ($conditions) {
+            $sqlFormat .= ' WHERE %s';
+        }
+
+        $tableName = $this->identifier($this->get_table_name($tableName));
+        $fields = $this->parse_columns($data);
+        $sets = array();
+        foreach($data as $key => $value) {
+            $sets[$key] = $this->get_value($value);
+        }
+        $setValues = $this->parse_set_values($sets);
+
+        if ($conditions) {
+            $where = array();
+            foreach($conditions as $field => $value) {
+                $where[$field] = $this->get_value($value);
+            }
+            $where = implode(' AND ', array_map(function($condition) {
+                $field = key($condition);
+                $value = $condition[$field];
+                return sprintf('%s = %s', $field, $value);
+            }, $where));
+            $query = sprintf($sqlFormat, $tableName, $setValues, $where);
+        } else {
+            $query = sprintf($sqlFormat, $tableName, $setValues);
+        }
+
+        $this->execute($query);
+    }
+
+    public function parse_set_values($sets)
+    {
+        $sets = array_map(function($set) {
+            $field = key($set);
+            $value = $set[$field];
+            return sprintf('%s = %s', $field, $value);
+        }, $sets);
+
+        return implode(', ', $sets);
+    }
+
+    public function parse_columns($columns)
     {
         $arrayCount = array_filter($columns,'is_array');
         if(count($arrayCount)>0) {
             $columns = array_pop($columns);
         }
 
-        return "(" . implode(',', array_map(array($this, 'identifier'), array_keys($columns))) . ")";
+        return array_map(array($this, 'identifier'), array_keys($columns));
+    }
+
+    public function get_columns($columns)
+    {
+        $columns = $this->parse_columns($columns);
+
+        return "(" . implode(',', $columns) . ")";
     }
 
     public function parse_values($data)
