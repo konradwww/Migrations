@@ -356,7 +356,6 @@ class MySQLBase extends Ruckusing_Adapter_Base implements Ruckusing_Adapter_Inte
         }
 
         $tableName = $this->identifier($this->get_table_name($tableName));
-        $fields = $this->parse_columns($data);
         $sets = array();
         foreach($data as $key => $value) {
             $sets[$key] = $this->get_value($value);
@@ -368,11 +367,14 @@ class MySQLBase extends Ruckusing_Adapter_Base implements Ruckusing_Adapter_Inte
             foreach($conditions as $field => $value) {
                 $where[$field] = $this->get_value($value);
             }
-            $where = implode(' AND ', array_map(function($condition) {
-                $field = key($condition);
-                $value = $condition[$field];
-                return sprintf('%s = %s', $field, $value);
-            }, $where));
+            $where = array();
+            foreach($conditions as $field => $value) {
+                $field = $this->identifier($field);
+                $value = $this->get_value($value);
+
+                $where[] = sprintf('%s = %s', $field, $value);
+            }
+            $where = implode(' AND ', $where);
             $query = sprintf($sqlFormat, $tableName, $setValues, $where);
         } else {
             $query = sprintf($sqlFormat, $tableName, $setValues);
@@ -381,13 +383,14 @@ class MySQLBase extends Ruckusing_Adapter_Base implements Ruckusing_Adapter_Inte
         $this->execute($query);
     }
 
-    public function parse_set_values($sets)
+    public function parse_set_values($values)
     {
-        $sets = array_map(function($set) {
-            $field = key($set);
-            $value = $set[$field];
-            return sprintf('%s = %s', $field, $value);
-        }, $sets);
+        $sets = array();
+        foreach($values as $field => $value) {
+            $field = $this->identifier($field);
+            $value = $this->get_value($value);
+            $sets[] = sprintf('%s = %s', $field, $value);
+        }
 
         return implode(', ', $sets);
     }
